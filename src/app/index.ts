@@ -1,12 +1,10 @@
 import express, { Express } from "express";
-import dotenv from "dotenv";
 import { appRouter } from "./router";
-
-dotenv.config();
+import config from "./config";
 
 export function startApp() {
   const app: Express = express();
-  const port = process.env.PORT;
+  const port = config.app.port;
 
   app.use(appRouter);
   

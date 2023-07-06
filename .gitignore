@@ -2,7 +2,10 @@
 node_modules
 
 # Ignore built ts files
-dist/**/*
+dist
 
 # Ignora env
 .env
+.env.development
+.env.staging
+.env.production

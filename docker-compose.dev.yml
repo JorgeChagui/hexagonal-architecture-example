@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+    my_hex_app:
+      environment:
+        - NODE_ENV=development
+      build:
+        ## 1) We are telling Docker where the app or the context is where it'll
+        ## going to be working.
+        context: .
+        ## 2) This is how we specify the STAGE to use of the Dockerfile
+        target: development
+      # Note: This opens the container to the public, and it also implies 
+      #   inter-container communication (EXPOSE in the Dockerfile)
+      ports:
+        - "8000:8000"
+      ## 3) Now we use Anonymous Volumes to enable the hot reload
+      volumes:
+        - ./src:/home/app/src
+        - ./dist:/home/app/dist
+        - ./tsconfig.json:/home/app/tsconfig.json
+        - ./.env.${NODE_ENV}:/home/app/.env
+        ## 3a) We must specify the path on our Host device, and the path on the Container
+        ## where we are mounting the Volume.
+        ## - <host_path_to_be_mounted>:<container_path_where_volume_will_be_mounted>
+      ## 4) The command option will replace the CMD statement in the Dockerfile
+      command: npm run dev
+      ## 5) Add the healthcheck to enable the status column in the docker ps command
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8000"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
+        start_period: 40s

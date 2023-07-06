@@ -3,16 +3,19 @@
 // Such as InversifyJS, Awilix, or tsyringe.
 
 
-import dotenv from "dotenv";
 import { UserFinder } from "../users/application/UserFinder";
 import { UserController } from "../users/infrastructure/UserController";
 import { InMemoryUserRepository } from "../users/infrastructure/InMemoryUserRepository";
 import { UserRepository } from "../users/domain/UserRepository";
 import { MyFakeSQLUserRepository } from "../users/infrastructure/MyFakeSQLUserRepository";
-
-dotenv.config();
+import config from "./config";
+import { repositoryType } from "./constants";
 
 // Here is were we create the concrete objects that have the implementation of the interfaces. We basically set the functionality here.
-const userRepo: UserRepository = process.env.repository_type === 'myfakesql'? new MyFakeSQLUserRepository(): new InMemoryUserRepository();
+const userRepo: UserRepository = config.app.repositoryType === repositoryType.MyFakeSQL? new MyFakeSQLUserRepository(): new InMemoryUserRepository();
 export const userFinder = new UserFinder(userRepo);
 export const userController = new UserController(userFinder);
+
+// We can also create the objects for the repository db connection,
+// and inject here the credentials using the config object
+// https://www.freecodecamp.org/news/using-environment-variables-the-right-way/
